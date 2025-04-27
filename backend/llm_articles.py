@@ -3,6 +3,7 @@
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_groq import ChatGroq
 from langchain_ollama.llms import OllamaLLM
 import os
 import re
@@ -12,6 +13,7 @@ import requests
 load_dotenv()
 google_api_key = os.environ.get("GOOGLE_API_KEY")
 google_cse_id = os.environ.get("GOOGLE_CSE_ID")
+groq_api_key = os.environ.get("GROQ_APIKEY")
 
 llm = None
 
@@ -23,6 +25,9 @@ def load_llm():
         top_p=0.9,
         repeat_penalty=1.2
     )
+    # llm = ChatGroq(temperature=0, groq_api_key=groq_api_key, model_name="deepseek-r1-distill-llama-70b")
+    # llm = ChatGroq(temperature=0, groq_api_key=groq_api_key, model_name="mixtral-8x7b-32768")
+    # llm = ChatGroq(temperature=0, groq_api_key=groq_api_key, model_name="llama-3.3-70b-versatile")
 
 def unload_llm():
     global llm
@@ -57,7 +62,6 @@ def get_recent_articles(sites, topics, weeks=1, articlesPerWeek=5):
                     article = {
                         'title': item.get('title'),
                         'url': item.get('link'),
-                        'snippet': item.get('snippet'),
                         'source': site,
                         'content': ''
                     }
