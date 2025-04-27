@@ -1,5 +1,7 @@
 bs4==0.0.2
 dotenv==0.9.9
-requests==2.32.3
+fastapi==0.115.12
 langchain==0.3.24
 langchain_ollama-0.3.2
+requests==2.32.3
+uvicorn==0.34.2
