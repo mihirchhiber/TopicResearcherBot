@@ -14,7 +14,7 @@ app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 def index():
-    return {"name": "Mihir"}
+    return {"Status": "200"}
 
 @app.get("/query-articles")
 def query_articles(
