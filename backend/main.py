@@ -1,8 +1,7 @@
-# main.py
-
-from fastapi import FastAPI, Query
+import llm_articles
+from database import insert_article
 from contextlib import asynccontextmanager
-import backend.llm_articles as llm_articles
+from fastapi import FastAPI, Query
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -14,7 +13,7 @@ app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 def index():
-    return {"Status": "200"}
+    return {"status": "200"}
 
 @app.get("/query-articles")
 def query_articles(
@@ -22,11 +21,19 @@ def query_articles(
     topics: list[str] = Query(..., description="List of topics to comb through")
 ):
     # Fetch articles
-    recent_articles = llm_articles.get_recent_articles(parent_sites, topics, weeks=1, articlesPerWeek=1)
+    recent_articles = llm_articles.get_recent_articles(parent_sites, topics, weeks=1, articlesPerWeek=2)
 
     # Process each article: clean and summarize
     for article in recent_articles:
-        article["clean_content"] = llm_articles.clean_article_text(article["title"], article["content"])
-        article["summary"] = llm_articles.summarize_article_text(article["title"], article["clean_content"])
+        llm_articles.clean_article_text(article)
+        llm_articles.summarize_article_text(article)
+        print("AMAZE")
+        insert_article(article)
 
-    return {"articles": recent_articles}
+    # Convert all Article objects to dicts for JSON response
+    articles_response = [article.to_dict() for article in recent_articles]
+
+    return {"articles": articles_response}
+
+# @app.get("/get-all-articles")
+# def get_all_articles():

@@ -1,5 +1,8 @@
 class Article:
-    def __init__(self, title, url, source, content, clean_content  = "", summary = ""):
+    def __init__(self, id, topics, sites, title, url, source, content, clean_content  = "", summary = ""):
+        self.id = id
+        self.topics = topics
+        self.sites = sites
         self.title = title
         self.url = url
         self.source = source
@@ -9,6 +12,9 @@ class Article:
 
     def to_dict(self):
         return {
+            'id': self.id,
+            'topics': self.topics,
+            'sites': self.sites,
             'title': self.title,
             'url': self.url,
             'source': self.source,
