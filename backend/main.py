@@ -1,5 +1,5 @@
 import llm_articles
-from database import insert_article, get_all_articles, get_article_topics_sites, delete_article_using_id
+from database import insert_article, get_all_articles, get_article_topics_sites, delete_article_using_id, get_article_using_topics_and_sites, delete_article_using_topics_and_sites
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Query
 
@@ -51,4 +51,19 @@ def return_topics_and_sites(article_id: int):
 
     delete_article_using_id(article_id)
     return {"article removed": 200}
-    
+
+@app.get("/get-articles-using-topics-and-sites")
+def query_articles(
+    topics: list[str] = Query(..., description="List of topics to comb through"),
+    sites: list[str] = Query(..., description="List of sites to check for articles")
+):  
+    articles = get_article_using_topics_and_sites(topics, sites)
+    return {"articles": articles}
+
+@app.get("/delete-articles-using-topics-and-sites")
+def query_articles(
+    topics: list[str] = Query(..., description="List of topics to comb through"),
+    sites: list[str] = Query(..., description="List of sites to check for articles")
+):  
+    delete_article_using_topics_and_sites(topics, sites)
+    return {"article removed": 200}
