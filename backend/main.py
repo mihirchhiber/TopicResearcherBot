@@ -1,5 +1,5 @@
 import llm_articles
-from database import insert_article, get_all_articles
+from database import insert_article, get_all_articles, get_article_topics_sites, delete_article_using_id
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Query
 
@@ -27,7 +27,6 @@ def query_articles(
     for article in recent_articles:
         llm_articles.clean_article_text(article)
         llm_articles.summarize_article_text(article)
-        print("AMAZE")
         insert_article(article)
 
     # Convert all Article objects to dicts for JSON response
@@ -40,4 +39,16 @@ def return_all_articles():
 
     articles = get_all_articles()
     return {"articles": articles}
+
+@app.get("/get-topics-and-sites")
+def return_topics_and_sites():
+
+    articles = get_article_topics_sites()
+    return {"articles": articles}
+
+@app.get("/delete-article/{article_id}")
+def return_topics_and_sites(article_id: int):
+
+    delete_article_using_id(article_id)
+    return {"article removed": 200}
     
