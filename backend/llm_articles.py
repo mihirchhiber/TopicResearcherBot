@@ -1,13 +1,12 @@
-from article import Article
-from bs4 import BeautifulSoup
-from dotenv import load_dotenv
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_groq import ChatGroq
-from langchain_ollama.llms import OllamaLLM
 import os
 import random
 import re
 import requests
+from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_ollama.llms import OllamaLLM
+from article import Article
 
 # Load environment variables
 load_dotenv()
@@ -18,6 +17,9 @@ groq_api_key = os.environ.get("GROQ_APIKEY")
 llm = None
 
 def load_llm():
+    """
+    Initialize the LLM model.
+    """
     global llm
     llm = OllamaLLM(
         model="llama3.2",
@@ -31,18 +33,35 @@ def load_llm():
     # llm = ChatGroq(temperature=0, groq_api_key=groq_api_key, model_name="llama-3.3-70b-versatile")
 
 def unload_llm():
+    """
+    Unload the LLM model (allow garbage collection).
+    """
     global llm
-    llm = None  # Allow Python to garbage collect
+    llm = None
 
 def remove_space(text):
+    """
+    Replace multiple spaces with a single space.
+    """
     while "  " in text:
         text = text.replace("  ", " ")
     return text
 
 def get_recent_articles(sites, topics, weeks=1, articlesPerWeek=5):
-    articles = []
+    """
+    Search for recent articles using Google Custom Search API.
 
-    id = random.randint(100000,1000000)
+    Args:
+        sites (list): List of parent websites.
+        topics (list): List of topics to search for.
+        weeks (int): Number of weeks to look back.
+        articlesPerWeek (int): Number of articles to retrieve per week per topic-site pair.
+
+    Returns:
+        list: List of Article objects with scraped content.
+    """
+    articles = []
+    id = random.randint(100000, 1000000)
 
     for site in sites:
         for topic in topics:
@@ -63,9 +82,9 @@ def get_recent_articles(sites, topics, weeks=1, articlesPerWeek=5):
 
                 for item in results.get('items', []):
                     article = Article(
-                        id = id,
-                        topics = topics,
-                        sites = sites,
+                        id=id,
+                        topics=topics,
+                        sites=sites,
                         title=item.get('title'),
                         url=item.get('link'),
                         source=site,
@@ -99,7 +118,15 @@ def get_recent_articles(sites, topics, weeks=1, articlesPerWeek=5):
     return articles
 
 def clean_article_text(article):
-    """Updates the Article object with cleaned content."""
+    """
+    Clean the extracted raw content of an article using an LLM.
+
+    Args:
+        article (Article): Article object with raw content.
+
+    Returns:
+        Article: Updated article with cleaned content.
+    """
     cleaning_messages = [
         ("system",
          "You are a text cleaner specialized in extracting only the main article content from messy website text. "
@@ -112,9 +139,7 @@ def clean_article_text(article):
         ("human",
          "The following text is extracted from a webpage about '{subject}'. Please extract and return only the main article content:\n\n{content}")
     ]
-
     cleaning_prompt_template = ChatPromptTemplate.from_messages(cleaning_messages)
-
     cleaning_prompt = cleaning_prompt_template.invoke({
         "subject": article.title,
         "content": article.content
@@ -125,7 +150,15 @@ def clean_article_text(article):
     return article
 
 def summarize_article_text(article):
-    """Updates the Article object with summarized content."""
+    """
+    Generate a short summary of the cleaned article using an LLM.
+
+    Args:
+        article (Article): Article object with cleaned content.
+
+    Returns:
+        Article: Updated article with a summary.
+    """
     summarization_messages = [
         ("system",
          "You are a professional summarizer. Your task is to create a clear and concise summary of the provided article content, strictly focused on the subject. "
@@ -136,9 +169,7 @@ def summarize_article_text(article):
         ("human",
          "Summarize the following article about '{subject}':\n\n{cleaned_content}")
     ]
-
     summarization_prompt_template = ChatPromptTemplate.from_messages(summarization_messages)
-
     summarization_prompt = summarization_prompt_template.invoke({
         "subject": article.title,
         "cleaned_content": article.clean_content
