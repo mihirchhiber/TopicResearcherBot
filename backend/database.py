@@ -25,6 +25,7 @@ def get_all_articles() -> list:
     """Get all articles."""
     articles = []
     for post in mycollection.find():
+        post.pop("_id") # not necessary field and can't be serialised as JSON
         articles.append(post) 
     return articles
 

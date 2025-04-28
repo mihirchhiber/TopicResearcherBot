@@ -1,5 +1,5 @@
 import llm_articles
-from database import insert_article
+from database import insert_article, get_all_articles
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Query
 
@@ -35,5 +35,9 @@ def query_articles(
 
     return {"articles": articles_response}
 
-# @app.get("/get-all-articles")
-# def get_all_articles():
+@app.get("/get-all-articles")
+def return_all_articles():
+
+    articles = get_all_articles()
+    return {"articles": articles}
+    
