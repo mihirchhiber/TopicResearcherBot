@@ -1,6 +1,6 @@
-# TopicResearcherBot
+# Topic Researcher Bot
 
-**TopicResearcherBot** is an intelligent assistant designed to streamline the process of researching and analyzing online content. It uses LLMs (via LangChain and Ollama) to automate topic-based article discovery, content cleaning, and summarization. This tool is ideal for researchers, analysts, and content teams who want fast, structured insights from recent web articles.
+**Topic Researcher Bot** is an intelligent assistant designed to streamline the process of researching and analyzing online content. It uses LLMs (via LangChain and Ollama) to automate topic-based article discovery, content cleaning, and summarization. This tool is ideal for researchers, analysts, and content teams who want fast, structured insights from recent web articles.
 
 ---
 
