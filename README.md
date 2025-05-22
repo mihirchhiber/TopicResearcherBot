@@ -12,6 +12,7 @@
 - **Summarization:** Uses a second LLM pass to generate concise summaries of the cleaned content.
 - **Structured Storage:** Articles are stored in a MongoDB database for easy retrieval, filtering, and deletion.
 - **Batch Article Retrieval:** Supports multi-week historical searches and batch retrieval per topic-site pair.
+- **Backend:** Developed using FastAPI
 
 ---
 
@@ -62,7 +63,7 @@ Core script that:
 
 ## Tech Stack
 
-- Python
+- FastAPI
 - LangChain
 - Ollama or Groq AI (LLM backend)
 - MongoDB
